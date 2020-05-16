@@ -1,0 +1,2 @@
+random_mer.py to identify random-N mers on one or both the end of adapter trimmed sequencing files
+fastqc_parser.py - prses output from FASTQC
