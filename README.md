@@ -5,7 +5,7 @@ adapt_find identifies adapters sequences from single-end raw sequencing files in
 
 adapt_find.py <sequencing_platform> [-- min_len] [-- max_len] [-- index] [-- input_path] [-- output_path] [-- files]
   
-"sequencing_platform" is a mandatory argument and has to be specified. A list of the arguments and available options can be found [here](https://github.com/asan-nasa/adapt_find/blob/master/manual/adapt_find_manual.pdf) 
+"sequencing_platform" is a mandatory argument and has to be specified. A list of arguments and available options can be found [here](https://github.com/asan-nasa/adapt_find/blob/master/manual/adapt_find_manual.pdf) 
 
 # adapt_find usage examples
 
@@ -33,18 +33,18 @@ random_mer identifies random_mer sequences from single-end adapter-trimmed FASTQ
 
 Example
 
-For running random_mer on all fastq files in the current working directory
+For running random_mer on all FASTQ files in the current working directory
 
 ```$ python random_mer.py ~/genome/file.fa ```
 
-For running random_mer only on selected files
+For running random_mer only on selected FASTQ files
 
 ```$ python random_mer.py ~/genome/file.fa --files filename1.fastq filename2.fastq```
 
 
 # fastqc_parser
 
-fastqc_parser can parse the output of FASTQC reports: consolidate the results and extract the relevant information from all the output files. Depending on input arguments, fastqc_parser can either run fastqc on raw fastq files and then parse the output. Alternatively, it can be run directly on fastqc output files. To run this script, the following dependencies are required: PYTHON, pandas module, and FASTQC.
+fastqc_parser can parse the output of FASTQC reports: consolidate the results and extract the relevant information from all the output files. Depending on input arguments, fastqc_parser can either run fastqc on raw FASTQ files and then parse the output. Alternatively, it can be run directly on FASTQC output files. To run this script, the following dependencies are required: PYTHON, pandas module, and FASTQC.
 
 # fastqc_parser usage
 
@@ -52,7 +52,7 @@ fastqc_parser can parse the output of FASTQC reports: consolidate the results an
 
 Example
 
-Run fastqc and parse the fastqc reports. And store the ouput in the current working directory
+Run FASTQC and parse the FASTQC reports. And store the output in the current working directory
 
 ```$ python fastqc_parser.py```
 
