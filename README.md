@@ -52,9 +52,14 @@ fastqc_parser can parse the output of FASTQC reports: consolidate the results an
 
 Example
 
-Run FASTQC and parse the FASTQC reports. And store the output in the current working directory
+For running FASTQC and parse the FASTQC reports.
 
 ```$ python fastqc_parser.py```
+
+Only parse fastqc report
+
+```$ python fastqc_parser.py --run_fastqc NO --fastqc_folder /path/to/fasqc_report ```
+
 
 
 The different arguments and options for the three tools are described in the [manual](https://github.com/asan-nasa/adapt_find/tree/master/manual)
