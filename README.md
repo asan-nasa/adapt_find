@@ -1,5 +1,5 @@
 # adapt_find
-adapt_find identifies adapters sequences from single end raw sequencing files in FASTQ format. To run the script on raw FASTQ files, the following dependencies are required: PYTHON pandas module, scipy, numpy, cutadapt, blast, and bowtie.
+adapt_find identifies adapters sequences from single-end raw sequencing files in FASTQ format. To run the script on raw FASTQ files, the following dependencies are required: PYTHON pandas module, scipy, numpy, cutadapt, blast, and bowtie.
 
 # adapt_find usage 
 
