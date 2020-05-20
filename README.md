@@ -1,11 +1,11 @@
 # adapt_find
-adapt_ find identifies adapters sequences from single end raw sequencing files in FASTQ format. To run the script on raw FASTQ files the following dependencies are required: PYTHON pandas module, cutadapt, blast and bowtie.
+adapt_find identifies adapters sequences from single end raw sequencing files in FASTQ format. To run the script on raw FASTQ files, the following dependencies are required: PYTHON pandas module, scipy, numpy, cutadapt, blast, and bowtie.
 
 # adapt_find usage 
 
 adapt_find.py <sequencing platform> [-- min_len] [-- max_len] [-- index] [-- input_path] [-- output_path] [-- files]
   
-  sequencing platform is a mandatory argument and has to be specified. For more options, please refer to the individual manuals under manual folder
+"sequencing platform" is a mandatory argument and has to be specified. A list of the arguments and available options can be found [here](https://github.com/asan-nasa/adapt_find/blob/master/manual/adapt_find_manual.pdf) 
 
 # adapt_find usage examples
 
@@ -25,7 +25,7 @@ For Illumina as sequencing platform and to specify path to folder containing FAS
 
 # random_mer
 
-random_mer identifies random_mer sequences from single end adapter trimmed FASTQ files. To run the script on raw FASTQ files the following dependencies are required: PYTHON pandas module, cutadapt, blast and bowtie.
+random_mer identifies random_mer sequences from single-end adapter-trimmed FASTQ files. To run the script on raw FASTQ files, the following dependencies are required: PYTHON pandas module, cutadapt, blast, and bowtie.
 
 # random_mer usage
 
@@ -42,9 +42,9 @@ For running only selected files
 ```$ python random_mer.py ~/genome/file.fa --files filename1.fastq filename2.fastq```
 
 
-# fastqc_consoldiate
+# fastqc_parser
 
-fastqc_consoldiate can parse the output of FASTQC reports, consolidate the results and extract relevant information from all output files. Depending on input arguments, fastqc_consoldiate can either run fastqc on raw fastq files and then parse the output. Alternatively, it can be run directly on fastqc output files. To run this script the following dependencies are required: PYTHON pandas module and FASTQC
+fastqc_parser can parse the output of FASTQC reports: consolidate the results and extract the relevant information from all the output files. Depending on input arguments, fastqc_parser can either run fastqc on raw fastq files and then parse the output. Alternatively, it can be run directly on fastqc output files. To run this script, the following dependencies are required: PYTHON, pandas module, and FASTQC.
 
 # fastqc_usage
 
@@ -57,7 +57,7 @@ Run fastqc and parse the fastqc reports and store ouput in current working direc
 ```$ python fastqc_parser.py```
 
 
-run_fastqc is a mandatory argument. The different arguments and options are mentioned in the manual
+The different arguments and options for the three tools are described in the [manual](https://github.com/asan-nasa/adapt_find/tree/master/manual)
 
 
 
