@@ -3,7 +3,7 @@ adapt_find identifies adapters sequences from single-end raw sequencing files in
 
 # adapt_find usage 
 
-adapt_find.py <sequencing_platform> [-- min_len] [-- max_len] [-- index] [-- input_path] [-- output_path] [-- files]
+```$ pythonadapt_find.py <sequencing_platform> [-- min_len] [-- max_len] [-- index] [-- input_path] [-- output_path] [-- files]```
   
 "sequencing_platform" is a mandatory argument and has to be specified. A list of arguments and available options can be found [here](https://github.com/asan-nasa/adapt_find/blob/master/manual/adapt_find_manual.pdf) 
 
