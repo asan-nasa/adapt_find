@@ -3,9 +3,9 @@ adapt_find identifies adapters sequences from single end raw sequencing files in
 
 # adapt_find usage 
 
-adapt_find.py <sequencing platform> [-- min_len] [-- max_len] [-- index] [-- input_path] [-- output_path] [-- files]
+adapt_find.py <sequencing_platform> [-- min_len] [-- max_len] [-- index] [-- input_path] [-- output_path] [-- files]
   
-"sequencing platform" is a mandatory argument and has to be specified. A list of the arguments and available options can be found [here](https://github.com/asan-nasa/adapt_find/blob/master/manual/adapt_find_manual.pdf) 
+"sequencing_platform" is a mandatory argument and has to be specified. A list of the arguments and available options can be found [here](https://github.com/asan-nasa/adapt_find/blob/master/manual/adapt_find_manual.pdf) 
 
 # adapt_find usage examples
 
@@ -33,11 +33,11 @@ random_mer identifies random_mer sequences from single-end adapter-trimmed FASTQ
 
 Example
 
-For running all fastq files in current working directory
+For running random_mer on all fastq files in current working directory
 
 ```$ python random_mer.py ~/genome/file.fa ```
 
-For running only selected files
+For running random_mer only on selected files
 
 ```$ python random_mer.py ~/genome/file.fa --files filename1.fastq filename2.fastq```
 
@@ -46,7 +46,7 @@ For running only selected files
 
 fastqc_parser can parse the output of FASTQC reports: consolidate the results and extract the relevant information from all the output files. Depending on input arguments, fastqc_parser can either run fastqc on raw fastq files and then parse the output. Alternatively, it can be run directly on fastqc output files. To run this script, the following dependencies are required: PYTHON, pandas module, and FASTQC.
 
-# fastqc_usage
+# fastqc_parser usage
 
 ```$ python fastqc_parser.py --run_fastqc [--fastqc_folder] [-- index]  [--param] [-- input_path] [-- output_path] [-- files] ```
 
