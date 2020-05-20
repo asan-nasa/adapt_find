@@ -33,7 +33,7 @@ random_mer identifies random_mer sequences from single-end adapter-trimmed FASTQ
 
 Example
 
-For running random_mer on all fastq files in current working directory
+For running random_mer on all fastq files in the current working directory
 
 ```$ python random_mer.py ~/genome/file.fa ```
 
@@ -52,7 +52,7 @@ fastqc_parser can parse the output of FASTQC reports: consolidate the results an
 
 Example
 
-Run fastqc and parse the fastqc reports. And store the ouput in current working directory
+Run fastqc and parse the fastqc reports. And store the ouput in the current working directory
 
 ```$ python fastqc_parser.py```
 
