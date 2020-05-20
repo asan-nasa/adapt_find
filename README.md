@@ -44,7 +44,7 @@ For running random_mer only on selected FASTQ files
 
 # fastqc_parser
 
-fastqc_parser can parse the output of FASTQC reports: consolidate the results and extract the relevant information from all the output files. Depending on input arguments, fastqc_parser can either run fastqc on raw FASTQ files and then parse the output. Alternatively, it can be run directly on FASTQC output files. To run this script, the following dependencies are required: PYTHON, pandas module, and FASTQC.
+fastqc_parser can parse the output of FASTQC reports: consolidate the results and extract the relevant information from all the output files. Depending on input arguments, fastqc_parser can either run FASTQC on raw FASTQ files and then parse the output. Alternatively, it can be run directly on FASTQC output files. To run this script, the following dependencies are required: PYTHON, pandas module, and FASTQC.
 
 # fastqc_parser usage
 
