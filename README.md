@@ -5,19 +5,19 @@ adapt_ find identifies adapters sequences from single end raw sequencing files i
 
 adapt_find.py <sequencing platform> [-- min_len] [-- max_len] [-- index] [-- input_path] [-- output_path] [-- files]
   
-  sequencing platform is a manadatory argument and has to be specified. For more options, please refer to the individual manuals under manual folder
+  sequencing platform is a mandatory argument and has to be specified. For more options, please refer to the individual manuals under manual folder
 
 # adapt_find usage examples
 
-For Illumina as sequencing_platform and if the current directory has all FASTQ files
+For Illumina as sequencing platform and if the current directory has all FASTQ files
 
 ```$ python adapt_find.py ILLUMINA```
 
-For Illumina as sequencing_platform and to specify filenames explicitly
+For Illumina as sequencing platform and to specify filenames explicitly
 
 ```$ python adapt_find.py ILLUMINA --files filename1.fastq filename2.fastq```
 
-For Illumina as sequencing_platform and to specify path to folder containing FASTQ files
+For Illumina as sequencing platform and to specify path to folder containing FASTQ files
 
 ```$ python adapt_find.py ILLUMINA --input_path path/to/folder```
 
@@ -44,7 +44,7 @@ For running only selected files
 
 # fastqc_consoldiate
 
-fastqc_consoldiate can parse the output of FASTQC reports. Consolidate the results and extract relevant information from all output files. Depending on input arguments, fastqc_consoldiate can either run fastqc on raw fastq files and then parse the output. Alternatively, it can be run directly on fastqc output files. To run this script the following dependencies are required: PYTHON pandas module and FASTQC
+fastqc_consoldiate can parse the output of FASTQC reports, consolidate the results and extract relevant information from all output files. Depending on input arguments, fastqc_consoldiate can either run fastqc on raw fastq files and then parse the output. Alternatively, it can be run directly on fastqc output files. To run this script the following dependencies are required: PYTHON pandas module and FASTQC
 
 # fastqc_usage
 
@@ -57,7 +57,7 @@ Run fastqc and parse the fastqc reports and store ouput in current working direc
 ```$ python fastqc_parser.py```
 
 
-run_fastqc is a mandatory argument. The different agruments and options are mentioned in the manual
+run_fastqc is a mandatory argument. The different arguments and options are mentioned in the manual
 
 
 
