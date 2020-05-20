@@ -52,7 +52,7 @@ fastqc_parser can parse the output of FASTQC reports: consolidate the results an
 
 Example
 
-Run fastqc and parse the fastqc reports and store ouput in current working directory
+Run fastqc and parse the fastqc reports. And store the ouput in current working directory
 
 ```$ python fastqc_parser.py```
 
