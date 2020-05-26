@@ -880,12 +880,15 @@ def worker3(f):
     csv.columns = ['query', 'subject', 'aligned_seq', 'aligned_length', 'evalue', 'qstart', 'sstart']
     #csv  =csv.loc[csv["aligned_length"] >=15]
     adapter = sorted(Counter(csv["aligned_seq"].tolist()).items(), key=operator.itemgetter(1), reverse=True)[0][0][:21]
+    print("Predicted adapter sequence for filename " + filename + " is " + adapter)
     print("Trimming ~" + filename)
     newpath = "aux_files/" + filename + "/"
     log = newpath + filename + "_bowtie.txt"
     log2 = newpath + filename + "_cutadapt.txt"
     tsv_file = newpath + filename+ "_sam.tsv"
     fastq_filename = "solid-adapter-trimmed/"+ filename + "_trimmed.fastq"
+    if float(os.popen("cutadapt --version").read().strip()) > 1.18:
+       sys.exit('\nERROR: Cutadapt version should be less than or equal to 1.18. Colorspace reads are supported only in cutadapt version 1.18 or earlier \n')
     command = "cutadapt -c --format=sra-fastq -a " + adapter + " -q 20 -m 15 -M50 " + filename +  ".fastq 2> " + log2 + " | cutadapt -c -q 20 -m 15 -M50 - > "  +  fastq_filename + " 2>> "+ log2
     print(command)
     os.system(command)
@@ -935,6 +938,8 @@ elif (args.sequencing_platform == "454") or (args.sequencing_platform == "ION_TO
 elif (args.sequencing_platform == "SOLID"):
   if not os.path.exists("q_fastq"):
     os.makedirs("q_fastq")
+  if not os.path.exists("solid-adapter-trimmed"):
+    os.makedirs("solid-adapter-trimmed")    
   os.system("wget https://gist.github.com/pcantalupo/9c30709fe802c96ea2b3/archive/b5a290a3993a4845d3766a018837557bd0f0047b.zip")
   os.system("unzip -j b5a290a3993a4845d3766a018837557bd0f0047b.zip 9c30709fe802c96ea2b3-b5a290a3993a4845d3766a018837557bd0f0047b/csfq2fq.pl")
   os.system("rm -r b5a290a3993a4845d3766a018837557bd0f0047b.zip")
