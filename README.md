@@ -1,5 +1,5 @@
 # adapt_find
-adapt_find identifies adapters sequences from single-end raw sequencing files in FASTQ format. To run the script on raw FASTQ files, the following dependencies are required: PYTHON pandas module, scipy, numpy, cutadapt (1.18 or earlier version for SOLiD sequencing files), blast, and bowtie.
+adapt_find identifies adapters sequences from single-end raw sequencing files in FASTQ format. To run the script on raw FASTQ files, the following dependencies are required: PYTHON pandas module, scipy, numpy, cutadapt, blast, and bowtie.
 
 # adapt_find usage 
 
@@ -20,6 +20,17 @@ For Illumina as sequencing platform and to specify filenames explicitly
 For Illumina as sequencing platform and to specify path to folder containing FASTQ files
 
 ```$ python adapt_find.py ILLUMINA --input_path path/to/folder```
+
+For Ion Torrent as sequencing platform and if the current directory has all FASTQ files
+
+```$ python adapt_find.py ION_TORRENT```
+
+For SOLiD as sequencing platform and if the current directory has all FASTQ files
+
+```$ python adapt_find.py SOLID```
+
+
+Note: cutadapt version 1.18 or an earlier version has to be used for SOLiD sequencing files, as colorspace format is not supported from cutadapt version 2.0 onwards.  
 
 
 
