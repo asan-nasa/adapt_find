@@ -930,12 +930,12 @@ def worker3(f):
         return [filename,"3prime","na",adapter,abund,"na",cut_adapt[0],no_reads,a,"bad"]   
     else:
         return [filename,"3prime","na",adapter,abund,"na",cut_adapt[0],"na","na","na"]
-
-if (args.sequencing_platform == "ILLUMINA"):
+if __name__ == "__main__":
+ if (args.sequencing_platform == "ILLUMINA"):
    worker = worker1
-elif (args.sequencing_platform == "454") or (args.sequencing_platform == "ION_TORRENT"):
+ elif (args.sequencing_platform == "454") or (args.sequencing_platform == "ION_TORRENT"):
    worker = worker2
-elif (args.sequencing_platform == "SOLID"):
+ elif (args.sequencing_platform == "SOLID"):
   if not os.path.exists("q_fastq"):
     os.makedirs("q_fastq")
   if not os.path.exists("solid-adapter-trimmed"):
@@ -944,20 +944,20 @@ elif (args.sequencing_platform == "SOLID"):
   os.system("unzip -j b5a290a3993a4845d3766a018837557bd0f0047b.zip 9c30709fe802c96ea2b3-b5a290a3993a4845d3766a018837557bd0f0047b/csfq2fq.pl")
   os.system("rm -r b5a290a3993a4845d3766a018837557bd0f0047b.zip")
   worker = worker3
-else:
+ else:
    sys.exit('\nERROR: Invalid argument. \n%s'%(docstring))
-size = {}
-for f in files:
- size[f] = os.path.getsize(f)
+ size = {}
+ for f in files:
+  size[f] = os.path.getsize(f)
 
-size = sorted(size.items(), key=operator.itemgetter(1))
-asan = [k for k, v in size if v >= 10000000000]
-nasa = [k for k, v in size if v < 10000000000]
-print("Total number of input files = " + str(len(files)) + "\n" + " Number of bigger files (>=10GB) = " + str(len(asan)) + "\n" + " Number of smaller files (<10 GB) = " + str(len(nasa)))
+ size = sorted(size.items(), key=operator.itemgetter(1))
+ asan = [k for k, v in size if v >= 10000000000]
+ nasa = [k for k, v in size if v < 10000000000]
+ print("Total number of input files = " + str(len(files)) + "\n" + " Number of bigger files (>=10GB) = " + str(len(asan)) + "\n" + " Number of smaller files (<10 GB) = " + str(len(nasa)))
 
-result_list =[]
+ result_list =[]
 
-if (len(nasa) != 0):
+ if (len(nasa) != 0):
     cp_count = multiprocessing.cpu_count()
     print("number of CPU is " + str(cp_count))
     if ((len(nasa)/cp_count) < 2):
@@ -989,7 +989,7 @@ if (len(nasa) != 0):
       result_list.append(pool.map(worker, [f for f in nasa[(new_a):] if f.endswith(".fastq")]))
       pool.close()
       pool.join()
-if (len(asan) != 0):
+ if (len(asan) != 0):
     if len(asan) >= 10:
      denom = int(len(asan)/5)
      new_a2 = int(len(asan)/denom)
@@ -1019,20 +1019,17 @@ if (len(asan) != 0):
       result_list.append(pool.map(worker, [f for f in asan if f.endswith(".fastq")]))
       pool.close()
       pool.join()
-result_list = list(itertools.chain.from_iterable(result_list))  
-asan  = pd.DataFrame.from_records(result_list, columns=['filename', 'adapter_type','5prime-adapter','3prime-adapter','#raw_reads','%reads_5prime-adapter','%reads_3prime-adapter','#reads_after_trimming','mapping-%','status'])       
-asan.to_csv("master_adapters.csv", sep = ",", index=False)
+ result_list = list(itertools.chain.from_iterable(result_list))  
+ asan  = pd.DataFrame.from_records(result_list, columns=['filename', 'adapter_type','5prime-adapter','3prime-adapter','#raw_reads','%reads_5prime-adapter','%reads_3prime-adapter','#reads_after_trimming','mapping-%','status'])       
+ asan.to_csv("master_adapters.csv", sep = ",", index=False)
 
-if len(files) != len(asan):
+ if len(files) != len(asan):
    print(str(len(files)-len(asan)) + " files have skipped trimming process")
 
-if (args.index!=None):
+ if (args.index!=None):
    command = "rm check.sam"
    print(command)
    os.system(command)
-
-if (ver != "2.7.1+"):
-   os.system("rm -r ncbi-blast-2.7.1+")
 
 if (args.sequencing_platform == "SOLID"):
    os.system("rm csfq2fq.pl")
