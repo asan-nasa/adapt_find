@@ -837,7 +837,10 @@ def worker2(f):
                     return element
 
 def worker3(f):
-    os.system("perl -X csfq2fq.pl " + f + " > q_fastq/" + f.split(".fastq")[0] + "_q.fastq")
+    if f.endswith(".fastq"):
+       os.system("perl -X csfq2fq.pl " + f + " > q_fastq/" + f.split(".fastq")[0] + "_q.fastq")
+    else:
+       os.system("perl -X csfq2fq.pl " + f + " > q_fastq/" + f.split(".fastq.gz")[0] + "_q.fastq")
     filename = f.split(".")[0]
     print("processing file " + f)
     command = "mkdir "+ "-p "+ "aux_files/" + filename
@@ -847,13 +850,8 @@ def worker3(f):
     subject_file = newpath + filename + "_subject.fa"
     blast_file = newpath + filename + "_blast.csv"
     infile= open("q_fastq/" + f.split(".fastq")[0] + "_q.fastq")
-    if f.endswith(".fastq.gz"):
-       fastq_lst=gzip.open(f,'rb').readlines()[1::4]
-       fastq_lst = [line.strip().decode() for line in fastq_lst]
-    else:
-       infile= open(f)
-       fastq_lst = infile.readlines()[1::4]
-       fastq_lst = [line.strip() for line in fastq_lst]
+    fastq_lst = infile.readlines()[1::4]
+    fastq_lst = [line.strip() for line in fastq_lst]
     abund = len(fastq_lst)
     collapsed = Counter(fastq_lst)
     collapsed = sorted(collapsed.items(), key=operator.itemgetter(1), reverse=True)
