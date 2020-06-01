@@ -22,9 +22,9 @@ pd.options.mode.chained_assignment = None
 
 docstring= """
 
-USAGE:  python ADAPT_find.py <argument> 
+USAGE:  python adapt_find.py <argument> 
 
-Example: python ADAPT_find.py ILLUMINA
+Example: python adapt_find.py ILLUMINA
 
 Arguments:
 Valid required arguments:
@@ -830,11 +830,10 @@ def worker2(f):
 def worker3(f):
     os.system("perl -X csfq2fq.pl " + f + " > q_fastq/" + f.split(".fastq")[0] + "_q.fastq")
     filename = f.split(".")[0]
-    print("processing file " + filename + ".fastq")
+    print("processing file " + f)
     command = "mkdir "+ "-p "+ "aux_files/" + filename
     os.system(command)
     newpath = "aux_files/" + filename + "/"
-    fastq_filename = filename + "_trimmed.fastq"
     query_file = newpath + filename + "_query.fa"
     subject_file = newpath + filename + "_subject.fa"
     blast_file = newpath + filename + "_blast.csv"
@@ -884,6 +883,7 @@ def worker3(f):
     log2 = newpath + filename + "_cutadapt.txt"
     tsv_file = newpath + filename+ "_sam.tsv"
     fastq_filename = "solid-adapter-trimmed/"+ filename + "_trimmed.fastq"
+    sam = newpath + filename + "_mapped.sam"
     if float(os.popen("cutadapt --version").read().strip()) > 1.18:
        sys.exit('\nERROR: Cutadapt version should be less than or equal to 1.18. Colorspace reads are supported only in cutadapt version 1.18 or earlier \n')
     command = "cutadapt -c --format=sra-fastq -a " + adapter + " -q 20 -m 15 -M50 " + filename +  ".fastq 2> " + log2 + " | cutadapt -c -q 20 -m 15 -M50 - > "  +  fastq_filename + " 2>> "+ log2
@@ -897,13 +897,16 @@ def worker3(f):
            cut_adapt.append(line.strip().replace(" ", "").split("(")[1].split(")")[0])
     if (args.index!=None):
       index = args.index
-      command = bowtie +" --best -C -v 3 -p 20 " + index + " -q " + fastq_filename + " -S 2> " + log + "| samtools view -Sh -F 4 - > mapped_master.sam"
+      command = bowtie +" --best -C -v 3 -p 20 " + index + " -q " + fastq_filename + " -S 2> " + log + "| samtools view -Sh -F 4 - > " + sam
       print(command)
       os.system(command)
       os.system("rm " + fastq_filename)
-      os.system("egrep -v '@HD|@SQ|@PG' mapped_master.sam > " + tsv_file)
+      os.system("egrep -v '@HD|@SQ|@PG' " + sam + " > " + tsv_file)
       tsv = pd.read_csv(tsv_file,sep='\t', header = None, quoting=3)
-      tsv.columns = ['header', 'flag', 'reference', 'sequence_start', 'MAPQ','CIGAR', 'REf-MATE', 'REF-MATE-POS', 'INSERT-SIZE', 'READ', 'ASCII', 'OPT-1','OPT-2','OPT-3','OPT-4']
+      if len(list(tsv)) == 16:
+         tsv.columns = ['header', 'flag', 'reference', 'sequence_start', 'MAPQ','CIGAR', 'REf-MATE', 'REF-MATE-POS', 'INSERT-SIZE', 'READ', 'ASCII', 'OPT-1','OPT-2','OPT-3','OPT-4','OPT-5']
+      else:
+         tsv.columns = ['header', 'flag', 'reference', 'sequence_start', 'MAPQ','CIGAR', 'REf-MATE', 'REF-MATE-POS', 'INSERT-SIZE', 'READ', 'ASCII', 'OPT-1','OPT-2','OPT-3','OPT-4']
       seq = []
       ofile = open(fastq_filename, "w")
       seq = tsv[['READ', 'ASCII']].apply(tuple, axis=1).tolist()
@@ -916,7 +919,6 @@ def worker3(f):
       lines = infile.readlines()
       a = float(lines[1].strip().split("(")[1].split("%")[0])
       no_reads = lines[0].strip().split("processed: ")[1]
-      command = "rm mapped_master.sam mapped_master.tsv"
       os.system(command)
       if (a >=50):
         return [filename,"3prime","na",adapter,abund,"na",cut_adapt[0],no_reads,a,"good"]
@@ -936,7 +938,17 @@ if __name__ == "__main__":
   if not os.path.exists("q_fastq"):
     os.makedirs("q_fastq")
   if not os.path.exists("solid-adapter-trimmed"):
-    os.makedirs("solid-adapter-trimmed")    
+    os.makedirs("solid-adapter-trimmed")
+  if (args.index!=None):
+   os.system("samtools --version > vers.txt")
+   infile= open("vers.txt", "r")
+   lines = infile.readlines()
+   if lines != []:
+    ver = lines[0].strip().split("samtools ")[1]
+   else:
+    ver = "no"
+   if (ver==no):
+     sys.exit('\nERROR: SAMtools not found. Please install samtools \n')
   os.system("wget https://gist.github.com/pcantalupo/9c30709fe802c96ea2b3/archive/b5a290a3993a4845d3766a018837557bd0f0047b.zip")
   os.system("unzip -j b5a290a3993a4845d3766a018837557bd0f0047b.zip 9c30709fe802c96ea2b3-b5a290a3993a4845d3766a018837557bd0f0047b/csfq2fq.pl")
   os.system("rm -r b5a290a3993a4845d3766a018837557bd0f0047b.zip")
@@ -1023,7 +1035,7 @@ if __name__ == "__main__":
  if len(files) != len(asan):
    print(str(len(files)-len(asan)) + " files have skipped trimming process")
 
- if (args.index!=None):
+ if (args.index!=None) and (args.sequencing_platform != "SOLID"):
    command = "rm check.sam"
    print(command)
    os.system(command)
