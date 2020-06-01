@@ -961,7 +961,7 @@ if __name__ == "__main__":
     ver = lines[0].strip().split("samtools ")[1]
    else:
     ver = "no"
-   if (ver==no):
+   if (ver=="no"):
      sys.exit('\nERROR: SAMtools not found. Please install samtools \n')
   os.system("wget https://gist.github.com/pcantalupo/9c30709fe802c96ea2b3/archive/b5a290a3993a4845d3766a018837557bd0f0047b.zip")
   os.system("unzip -j b5a290a3993a4845d3766a018837557bd0f0047b.zip 9c30709fe802c96ea2b3-b5a290a3993a4845d3766a018837557bd0f0047b/csfq2fq.pl")
