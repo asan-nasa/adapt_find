@@ -16,6 +16,7 @@ import argparse
 import itertools
 from difflib import SequenceMatcher
 from operator import itemgetter
+import gzip
 pd.options.mode.chained_assignment = None
 
 #agrparse section
@@ -62,13 +63,13 @@ if (args.input_path!=None) and (args.files!=None):
    sys.exit('\nERROR: input path and files option cannnot be specified together. Only one of the two options can be specified. use ADAPT_find.py --help for more info\n%s'%(docstring))
 elif (args.files!=None):
    files= args.files
-   files = [f for f in files if f.split("/")[-1].endswith(".fastq")]
+   files = [f for f in files if f.split("/")[-1].endswith(".fastq") or f.split("/")[-1].endswith(".fastq.gz")]
 else:
    if (args.input_path==None):
     cwd = os.getcwd()
    else:
     cwd= args.input_path
-   files = [f for f in os.listdir(cwd) if f.endswith(".fastq")]
+   files = [f for f in os.listdir(cwd) if f.endswith(".fastq") or f.endswith(".fastq.gz")]
 
 if len(files)==0: 
    sys.exit('\nERROR: Could not find any FASTQ files. Please check if the input path is specified correctly. use ADAPT_find.py --help for more info\n%s'%(docstring))   
@@ -141,9 +142,13 @@ def worker1(f):
             filename4 = newpath + filename + "_adapters.csv"
             log = newpath + filename+ "_bowtie.txt"
             log2 = newpath + filename+ "_cutadapt.txt"
-            infile= open(f)
-            fastq_lst = infile.readlines()[1::4]
-            fastq_lst = [line.strip() for line in fastq_lst]
+            if f.endswith(".fastq.gz"):
+               fastq_lst=gzip.open(f,'rb').readlines()[1::4]
+               fastq_lst = [line.strip().decode() for line in fastq_lst]
+            else:
+               infile= open(f)
+               fastq_lst = infile.readlines()[1::4]
+               fastq_lst = [line.strip() for line in fastq_lst]
             abund = len(fastq_lst)
             collapsed2 = Counter(fastq_lst)
             collapsed = sorted(collapsed2.items(), key=operator.itemgetter(1), reverse=True)
@@ -654,9 +659,13 @@ def worker2(f):
             filename4 = newpath + filename + "_adapters.csv"
             log = newpath + filename+ "_bowtie.txt"
             log2 = newpath + filename+ "_cutadapt.txt"
-            infile= open(f)
-            fastq_lst = infile.readlines()[1::4]
-            fastq_lst = [line.strip() for line in fastq_lst]
+            if f.endswith(".fastq.gz"):
+               fastq_lst=gzip.open(f,'rb').readlines()[1::4]
+               fastq_lst = [line.strip().decode() for line in fastq_lst]
+            else:
+               infile= open(f)
+               fastq_lst = infile.readlines()[1::4]
+               fastq_lst = [line.strip() for line in fastq_lst]
             abund  = len(fastq_lst)
             collapsed = Counter(fastq_lst)
             collapsed = sorted(collapsed.items(), key=operator.itemgetter(1), reverse=True)
@@ -838,8 +847,13 @@ def worker3(f):
     subject_file = newpath + filename + "_subject.fa"
     blast_file = newpath + filename + "_blast.csv"
     infile= open("q_fastq/" + f.split(".fastq")[0] + "_q.fastq")
-    fastq_lst = infile.readlines()[1::4]
-    fastq_lst = [line.strip() for line in fastq_lst]
+    if f.endswith(".fastq.gz"):
+       fastq_lst=gzip.open(f,'rb').readlines()[1::4]
+       fastq_lst = [line.strip().decode() for line in fastq_lst]
+    else:
+       infile= open(f)
+       fastq_lst = infile.readlines()[1::4]]
+       fastq_lst = [line.strip() for line in fastq_lst]
     abund = len(fastq_lst)
     collapsed = Counter(fastq_lst)
     collapsed = sorted(collapsed.items(), key=operator.itemgetter(1), reverse=True)
@@ -972,7 +986,7 @@ if __name__ == "__main__":
     if ((len(nasa)/cp_count) < 2):
        pool = multiprocessing.Pool(processes = int(cp_count/2))
        print("Processing " + str(len(nasa)) + " files")
-       result_list.append(pool.map(worker, [f for f in nasa if f.endswith(".fastq")]))
+       result_list.append(pool.map(worker, [f for f in nasa ]))
        pool.close()
        pool.join()
     else:
@@ -980,14 +994,14 @@ if __name__ == "__main__":
      new_a2 = int(len(nasa)/denom)
      pool = multiprocessing.Pool(processes = int(cp_count/2))
      print("Working on first batch")
-     result_list.append(pool.map(worker, [f for f in nasa[:new_a2] if f.endswith(".fastq")]))
+     result_list.append(pool.map(worker, [f for f in nasa[:new_a2] ]))
      pool.close()
      pool.join()
      new_a = new_a2 
      for no in range(2,(denom+1)):
       pool = multiprocessing.Pool(processes = int(cp_count/2))
       print("Working on batch#" + str(no))
-      result_list.append(pool.map(worker, [f for f in nasa[new_a:(new_a + new_a2)] if f.endswith(".fastq")]))
+      result_list.append(pool.map(worker, [f for f in nasa[new_a:(new_a + new_a2)] ]))
       new_a = new_a +new_a2
       pool.close()
       pool.join()
@@ -995,7 +1009,7 @@ if __name__ == "__main__":
      if len(nasa) != (new_a-1):
       pool = multiprocessing.Pool(processes = 5)
       print("Working on batch#" + str(no+1))
-      result_list.append(pool.map(worker, [f for f in nasa[(new_a):] if f.endswith(".fastq")]))
+      result_list.append(pool.map(worker, [f for f in nasa[(new_a):] ]))
       pool.close()
       pool.join()
  if (len(asan) != 0):
@@ -1005,27 +1019,27 @@ if __name__ == "__main__":
      print("No of big files is " + str(len(asan)))
      pool = multiprocessing.Pool(processes = 3)
      print("Working on first batch")
-     result_list.append(pool.map(worker, [f for f in asan[:new_a2] if f.endswith(".fastq")]))
+     result_list.append(pool.map(worker, [f for f in asan[:new_a2] ]))
      pool.close()
      pool.join()
      new_a = new_a2
      for no in range(2,(denom+1)):
       pool = multiprocessing.Pool(processes = 5)
       print("Working on batch#" + str(no))
-      result_list.append(pool.map(worker, [f for f in asan[new_a:(new_a + new_a2)] if f.endswith(".fastq")]))
+      result_list.append(pool.map(worker, [f for f in asan[new_a:(new_a + new_a2)] ]))
       new_a = new_a +new_a2
       pool.close()
       pool.join()
      if len(asan) != (new_a-1):
       pool = multiprocessing.Pool(processes = 5)
       print("Working on batch#" + str(no+1))
-      result_list.append(pool.map(worker, [f for f in asan[new_a:] if f.endswith(".fastq")]))
+      result_list.append(pool.map(worker, [f for f in asan[new_a:] ]))
       pool.close()
       pool.join()
     else:
       print("Working on bigger file(s) (file size greater than 10 GB)")
       pool = multiprocessing.Pool(processes = 5)
-      result_list.append(pool.map(worker, [f for f in asan if f.endswith(".fastq")]))
+      result_list.append(pool.map(worker, [f for f in asan ]))
       pool.close()
       pool.join()
  result_list = list(itertools.chain.from_iterable(result_list))  
