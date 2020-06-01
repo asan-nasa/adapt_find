@@ -91,42 +91,39 @@ if (args.index!=None):
    index = args.index
 
 
-#check if Package: blast 2.7.1 exists
+#check if blast exists (version >= 2.7)
 os.system("blastn -version > vers.txt")
 infile= open("vers.txt", "r")
 lines = infile.readlines()
 if lines != []:
-   ver = lines[0].strip().split("blastn: ")[1]
+   ver = float(lines[0].strip().split("blastn: ")[1][:3])
 else:
    ver = "no"
-if (ver != "2.7.1+"):
- print("Downloading and extracting BLAST 2.7.1")
- os.system("wget ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.7.1/ncbi-blast-2.7.1+-x64-linux.tar.gz")
- os.system("tar -xzf ncbi-blast-2.7.1+-x64-linux.tar.gz && rm ncbi-blast-2.7.1+-x64-linux.tar.gz")
- blastn = os.getcwd() + "/ncbi-blast-2.7.1+/bin/blastn"
-
+if (ver == "no"):
+ sys.exit('\nERROR: blast not found. Please install blast 2.7 or any version released after 2.7\n')
+elif (ver < 2.7):
+  sys.exit('\nERROR: adapt_find requires blast version 2.7 or higher\n')
 else:
  blastn = "blastn"
 
-#check if bowtie version 1.1.2 exist only of args.index is provided
+#check if bowtie version exists (version >= 1.1)
 if (args.index!=None):
    os.system("bowtie --version > vers.txt")
    infile= open("vers.txt", "r")
    lines = infile.readlines()
    if lines != []:
-      ver1 = lines[0].strip().split("bowtie version")[1].split(" ")[1]
+      ver1 = float(lines[0].strip().split("bowtie version")[1].split(" ")[1][:3])
    else:
       ver1 = "no"
-   if (ver1 != "1.1.2"):
-      print("Downloading and extracting bowtie 1.1.2") 
-      os.system("wget https://sourceforge.net/projects/bowtie-bio/files/bowtie/1.1.2/bowtie-1.1.2-linux-x86_64.zip")
-      os.system("unzip bowtie-1.1.2-linux-x86_64.zip && rm bowtie-1.1.2-linux-x86_64.zip")
-      bowtie =  os.getcwd() + "/bowtie-1.1.2/bowtie"
+   if (ver1 == "no"):
+      sys.exit('\nERROR: bowtie not found. Please install bowtie version 1.1 or any version released after 1.1')
+   elif (ver1 < 1.1):
+      sys.exit('\nERROR: adapt_find requires bowtie 1.1 or higher\n')
    else:
       bowtie = "bowtie"
    
 if os.popen("cutadapt --version").read().strip() == "":
-   os.system("pip install --user --upgrade cutadapt==1.15")
+   os.system('\nERROR: Cutadapt not found. Please install cutadapt')
 
 os.system("rm vers.txt")
 
