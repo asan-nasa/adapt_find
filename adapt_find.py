@@ -1049,7 +1049,7 @@ if __name__ == "__main__":
 
  if (args.index!=None) and (args.sequencing_platform != "SOLID"):
    command = "rm check.sam"
-   print(command)
+   #print(command)
    os.system(command)
 
 if (args.sequencing_platform == "SOLID"):
