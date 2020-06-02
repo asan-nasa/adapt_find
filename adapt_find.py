@@ -837,12 +837,14 @@ def worker2(f):
                     return element
 
 def worker3(f):
-    if f.endswith(".fastq"):
-       os.system("perl -X csfq2fq.pl " + f + " > q_fastq/" + f.split(".fastq")[0] + "_q.fastq")
-    else:
-       os.system("perl -X csfq2fq.pl " + f + " > q_fastq/" + f.split(".fastq.gz")[0] + "_q.fastq")
-    filename = f.split(".")[0]
     print("processing file " + f)
+    if f.endswith(".fastq.gz"):
+       os.system("gunzip " + f)
+       f = f.split(".fastq.gz")[0] + ".fastq"
+    os.system("perl -X csfq2fq.pl " + f + " > q_fastq/" + f.split(".fastq")[0] + "_q.fastq")
+    if f.endswith(".fastq.gz"):
+       os.system("gzip " + f)
+    filename = f.split(".")[0]
     command = "mkdir "+ "-p "+ "aux_files/" + filename
     os.system(command)
     newpath = "aux_files/" + filename + "/"
@@ -852,8 +854,6 @@ def worker3(f):
     infile= open("q_fastq/" + f.split(".fastq")[0] + "_q.fastq")
     fastq_lst = infile.readlines()[1::4]
     fastq_lst = [line.strip() for line in fastq_lst]
-    if f.endswith(".fastq.gz"):
-       fastq_lst = [line.strip().decode() for line in fastq_lst]
     abund = len(fastq_lst)
     collapsed = Counter(fastq_lst)
     collapsed = sorted(collapsed.items(), key=operator.itemgetter(1), reverse=True)
