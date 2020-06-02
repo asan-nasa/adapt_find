@@ -852,6 +852,8 @@ def worker3(f):
     infile= open("q_fastq/" + f.split(".fastq")[0] + "_q.fastq")
     fastq_lst = infile.readlines()[1::4]
     fastq_lst = [line.strip() for line in fastq_lst]
+    if f.endswith(".fastq.gz"):
+       fastq_lst = [line.strip().decode() for line in fastq_lst]
     abund = len(fastq_lst)
     collapsed = Counter(fastq_lst)
     collapsed = sorted(collapsed.items(), key=operator.itemgetter(1), reverse=True)
