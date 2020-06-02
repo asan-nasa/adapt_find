@@ -957,6 +957,7 @@ if __name__ == "__main__":
    os.system("samtools --version > vers.txt")
    infile= open("vers.txt", "r")
    lines = infile.readlines()
+   os.system("rm vers.txt")
    if lines != []:
     ver = lines[0].strip().split("samtools ")[1]
    else:
