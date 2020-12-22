@@ -97,12 +97,12 @@ os.system("blastn -version > vers.txt")
 infile= open("vers.txt", "r")
 lines = infile.readlines()
 if lines != []:
-   ver = float(lines[0].strip().split("blastn: ")[1][:3])
+   ver = lines[0].strip().split("blastn: ")[1].split("+")[0][2:]
 else:
    ver = "no"
 if (ver == "no"):
  sys.exit('\nERROR: blast not found. Please install blast 2.7 or any version released after 2.7\n')
-elif (ver < 2.7):
+elif (ver < 7.0):
   sys.exit('\nERROR: adapt_find requires blast version 2.7 or higher\n')
 else:
  blastn = "blastn"
