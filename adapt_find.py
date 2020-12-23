@@ -97,7 +97,7 @@ os.system("blastn -version > vers.txt")
 infile= open("vers.txt", "r")
 lines = infile.readlines()
 if lines != []:
-   ver = lines[0].strip().split("blastn: ")[1].split("+")[0][2:]
+   ver = float(lines[0].strip().split("blastn: ")[1].split("+")[0][2:])
 else:
    ver = "no"
 if (ver == "no"):
@@ -517,6 +517,7 @@ def worker1(f):
                   adapter = collapsed[0][0]
                 else:
                    adapter = collapsed[0][0]
+                   adap_lst = collapsed
              
              print ("\n" + "Putative three prime end adapters for filename - " +  filename + " is ")
              print (adap_lst)
