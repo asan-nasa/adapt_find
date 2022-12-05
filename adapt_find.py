@@ -58,6 +58,11 @@ optional.add_argument('--files', nargs='*', help= 'enter FASTQ files seperated b
 optional.add_argument("-h", "--help", action='help', help='print help message')
 args = parser.parse_args()
 
+if (args.output_path!=None):
+   path = args.output_path
+else:
+   path = os.getcwd()
+
 # get the current working directory
 if (args.input_path!=None) and (args.files!=None):
    sys.exit('\nERROR: input path and files option cannnot be specified together. Only one of the two options can be specified. use ADAPT_find.py --help for more info\n%s'%(docstring))
@@ -77,16 +82,16 @@ if len(files)==0:
 if (args.sequencing_platform!="ILLUMINA") and (args.sequencing_platform!="SOLID") and (args.sequencing_platform!="ION_TORRENT") and (args.sequencing_platform!="454"):
    sys.exit('\nERROR: Invalid argument for sequencing_platform . use ADAPT_find.py --help for more info\n%s'%(docstring))
 
-if not os.path.exists("good-mapping"):
-    os.makedirs("good-mapping")
+if not os.path.exists(path+ "/"+ "good-mapping"):
+    os.makedirs(path+ "/"+ "good-mapping")
 
 
-if not os.path.exists("bad-mapping"):
-    os.makedirs("bad-mapping")
+if not os.path.exists(path+ "/"+ "bad-mapping"):
+    os.makedirs(path+ "/"+ "bad-mapping")
 
     
-if not os.path.exists("no_overepresented_sequences"):
-    os.makedirs("no_overepresented_sequences")
+if not os.path.exists(path+ "/"+ "no_overepresented_sequences"):
+    os.makedirs(path+ "/"+ "no_overepresented_sequences")
 
 if (args.index!=None):
    index = args.index
@@ -131,12 +136,9 @@ os.system("rm vers.txt")
 def worker1(f):
             filename = f.split("/")[-1].split(".")[0]
             print("processing file " + filename + ".fastq") 
-            command = "mkdir "+ "-p "+ "aux_files/" + filename
+            command = "mkdir "+ "-p "+ path + "/aux_files/" + filename
             os.system(command)
-            if (args.input_path!=None):
-               newpath = args.input_path + "/aux_files/" + filename + "/"
-            else:
-               newpath = "aux_files/" + filename + "/"
+            newpath = path + "aux_files/" + filename + "/"
             fastq_filename = filename + "_trimmed.fastq"
             query_file = newpath + filename + "_query.fa"
             subject_file = newpath + filename + "_subject.fa"
@@ -217,11 +219,11 @@ def worker1(f):
              if ((len(seq_len)>1) and (seq_var > 0.17) and (max(seq_len) < 50)) or ((seq_median < 30) and (max(seq_len) < 50)):
                 print("There is no adapter sequence and the length distribution of top 100 collapsed reads is ..........")
                 print(list(set(new_df2["Sequence_length"].tolist())))
-                command = "cutadapt --trim-n -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " " +  f + " 2> " + log2 + " | cutadapt -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len)  + " - > good-mapping/" + fastq_filename + " 2>> "+ log2
+                command = "cutadapt --trim-n -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " " +  f + " 2> " + log2 + " | cutadapt -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len)  + " - > " + path + "/good-mapping/" + fastq_filename + " 2>> "+ log2
                 print(command)
                 os.system(command)
                 if (args.index!=None):
-                 command = bowtie +" --best -v 1 -p 20 " + index + " -q good-mapping/" + fastq_filename + " > check.sam 2> "+ log
+                 command = bowtie +" --best -v 1 -p 20 " + index + " -q " + path+ "/good-mapping/" + fastq_filename + " > check.sam 2> "+ log
                  os.system(command)
                  infile= open(log, "r")
                  lines = infile.readlines()
@@ -231,7 +233,7 @@ def worker1(f):
                     element = [filename,"no adapter","na","na",abund,"na","na", no_reads,a,"good"]
                     return element
                  else:
-                    command = "mv good-mapping/"+ fastq_filename + " bad-mapping/" + fastq_filename
+                    command = "mv " + path + "/good-mapping/"+ fastq_filename + " " + path+ "/bad-mapping/" + fastq_filename
                     print(command)
                     os.system(command)
                     element = [filename,"no adapter","na","na",abund,"na","na", no_reads,a,"bad"]
@@ -260,7 +262,7 @@ def worker1(f):
              
                           
              if (len(forward_adapter) > 2) and (len(reverse_adapter) > 2):
-                 command = "cutadapt -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " " + "-g ^" + forward_adapter +  " " +  f + " 2> " + log2 + " | cutadapt -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " -a " + reverse_adapter + " - > good-mapping/" + fastq_filename + " 2>> "+ log2
+                 command = "cutadapt -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " " + "-g ^" + forward_adapter +  " " +  f + " 2> " + log2 + " | cutadapt -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " -a " + reverse_adapter + " - > " + path + "/good-mapping/" + fastq_filename + " 2>> "+ log2
                  print(command)
                  os.system(command)
                  infile= open(log2, "r")
@@ -270,7 +272,7 @@ def worker1(f):
                    if "Reads with adapters" in line:
                     cut_adapt.append(line.strip().replace(" ", "").split("(")[1].split(")")[0])
                  if (args.index!=None):
-                  command = bowtie +" --best -v 1 -p 20 " + index + " -q good-mapping/" + fastq_filename + " > check.sam 2> "+ log
+                  command = bowtie +" --best -v 1 -p 20 " + index + " -q " + path + "/good-mapping/" + fastq_filename + " > check.sam 2> "+ log
                   print(command)
                   os.system(command)
                   adapter = "5 prime = " +forward_adapter + " & 3 prime = " + reverse_adapter
@@ -282,7 +284,7 @@ def worker1(f):
                     element = [filename,"5&3'-anchored",forward_adapter,reverse_adapter,abund,cut_adapt[0],cut_adapt[1],no_reads,a,"good"]
                     return element
                   else:
-                    command = "mv good-mapping/"+ fastq_filename + " bad-mapping/" + fastq_filename
+                    command = "mv " + path + "/good-mapping/"+ fastq_filename + " " + path + "/bad-mapping/" + fastq_filename
                     print(command)
                     os.system(command)
                     element = [filename,"5&3'-anchored",forward_adapter,reverse_adapter,abund,cut_adapt[0],cut_adapt[1],no_reads,a,"bad"]
@@ -529,7 +531,7 @@ def worker1(f):
              print("Three prime end adapter sequence for filename - " +  filename + " is " + str(adapter) + "\n" + "Trimming with CUTADAPT" + "\n")
 
              if len(forward_adapter) > 3:
-                 command = "cutadapt -g ^" + forward_adapter + " -m " + str(args.min_len) + " -M " + str(args.max_len) + " " +  f + " 2> " + log2 + " | cutadapt -q 20 " + "-m " + str(args.min_len)+ " -M " + str(args.max_len) + " -a " + adapter + " - > good-mapping/" + fastq_filename + " 2>> "+ log2
+                 command = "cutadapt -g ^" + forward_adapter + " -m " + str(args.min_len) + " -M " + str(args.max_len) + " " +  f + " 2> " + log2 + " | cutadapt -q 20 " + "-m " + str(args.min_len)+ " -M " + str(args.max_len) + " -a " + adapter + " - > " + path + "/good-mapping/" + fastq_filename + " 2>> "+ log2
                  print(command)
                  os.system(command)
                  infile= open(log2, "r")
@@ -539,7 +541,7 @@ def worker1(f):
                    if "Reads with adapters" in line:
                     cut_adapt.append(line.strip().replace(" ", "").split("(")[1].split(")")[0])
                  if (args.index!=None):
-                  command = bowtie +" --best -v 1 -p 20 " + index + " -q good-mapping/" + fastq_filename + " > check.sam 2> "+ log
+                  command = bowtie +" --best -v 1 -p 20 " + index + " -q " + path + "/good-mapping/" + fastq_filename + " > check.sam 2> "+ log
                   print(command)
                   os.system(command)
                   infile= open(log, "r")
@@ -550,14 +552,14 @@ def worker1(f):
                     element = [filename,"5'-anchored&3'-normal", forward_adapter,adapter,abund, cut_adapt[0],cut_adapt[1],no_reads,a,"good"]
                     return element
                   else:
-                    command = "mv good-mapping/"+ fastq_filename + " bad-mapping/" + fastq_filename
+                    command = "mv " + path + "/good-mapping/"+ fastq_filename + " " + path + "/bad-mapping/" + fastq_filename
                     element = [filename,"5'-anchored&3'-normal", forward_adapter,adapter,abund, cut_adapt[0],cut_adapt[1],no_reads,a,"bad"]
                     return element
                  else:
                     element = [filename,"5'-anchored&3'-normal", forward_adapter,adapter,abund, cut_adapt[0],cut_adapt[1],"na","na","na"]
                     return element
              else:
-                 command = "cutadapt -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " -a " + adapter + " -o good-mapping/" + fastq_filename +  " " + f + " > "+ log2
+                 command = "cutadapt -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " -a " + adapter + " -o " + path + "/good-mapping/" + fastq_filename +  " " + f + " > "+ log2
                  print(command)
                  os.system(command)
                  def cut(x):
@@ -624,13 +626,13 @@ def worker1(f):
                      if len(elem) > len(adapter):
                        adapter = elem
                    print ("adpater for filename " + str(filename) + " is " + str(adapter))
-                   command = "cutadapt -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " -a " + adapter + " -o good-mapping/" + fastq_filename +  " " + f + " > "+ log2
+                   command = "cutadapt -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " -a " + adapter + " -o " + path + "/good-mapping/" + fastq_filename +  " " + f + " > "+ log2
                    print (command)
                    os.system(command)
                    d = cut(log2)
                  d = str(d) + "%"
                  if (args.index!=None):
-                  command = bowtie +" --best -v 1 -p 20 " + index + " -q good-mapping/" + fastq_filename + " > check.sam 2> "+ log
+                  command = bowtie +" --best -v 1 -p 20 " + index + " -q " + path + "/good-mapping/" + fastq_filename + " > check.sam 2> "+ log
                   print(command)
                   os.system(command)
                   infile= open(log, "r")
@@ -641,7 +643,7 @@ def worker1(f):
                     element = [filename,"3'-normal","na",adapter,abund,"na",str(d),no_reads,a,"good"]
                     return element
                   else:
-                    command = "mv good-mapping/"+ fastq_filename + " bad-mapping/" + fastq_filename
+                    command = "mv " + path + "/good-mapping/"+ fastq_filename + " " + path + "/bad-mapping/" + fastq_filename
                     print(command)
                     os.system(command)
                     element = [filename,"3'-normal","na",adapter,abund,"na",str(d),no_reads,a,"bad"]
@@ -651,12 +653,9 @@ def worker1(f):
                     return element 
 def worker2(f):
             filename = f.split(".")[0]
-            command = "mkdir "+ "-p "+ "aux_files/" + filename
+            command = "mkdir "+ "-p "+ path + "aux_files/" + filename
             os.system(command)
-            if (args.input_path!=None):
-               newpath = args.input_path + "/aux_files/" + filename + "/"
-            else:
-               newpath = "aux_files/" + filename + "/"
+            newpath = path + "aux_files/" + filename + "/"
             fastq_filename = filename + "_trimmed.fastq"
             query_file = newpath + filename + "_query.fa"
             subject_file = newpath + filename + "_subject.fa"
@@ -728,11 +727,11 @@ def worker2(f):
              if ((len(seq_len)>1) and (seq_var > 0.17) and (max(seq_len) < 50)) or ((seq_median < 30) and (max(seq_len) < 50)):
                 print("There is no adapter sequences and the length distribution of sequences is ..........")
                 print(seq_len)
-                command = "cutadapt --trim-n" + " -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " " +  f + " 2> " + log2 + " | cutadapt -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " "  + " - > good-mapping/" + fastq_filename + " 2>> "+ log2
+                command = "cutadapt --trim-n" + " -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " " +  f + " 2> " + log2 + " | cutadapt -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " "  + " - > " + path + "/good-mapping/" + fastq_filename + " 2>> "+ log2
                 print(command)
                 os.system(command)
                 if (args.index!=None):
-                 command = bowtie + " --best -v 1 -p 20 " + index + " -q good-mapping/" + fastq_filename + " > check.sam 2> "+ log
+                 command = bowtie + " --best -v 1 -p 20 " + index + " -q " + path + "/good-mapping/" + fastq_filename + " > check.sam 2> "+ log
                  os.system(command)
                  infile= open(log, "r")
                  lines = infile.readlines()
@@ -743,7 +742,7 @@ def worker2(f):
                     return element
                     
                  else:
-                    command = "mv good-mapping/"+ fastq_filename + " bad-mapping/" + fastq_filename
+                    command = "mv " + path + "/good-mapping/"+ fastq_filename + " " + path + "/bad-mapping/" + fastq_filename
                     print(command)
                     os.system(command)
                     element = [filename,"na","na","na",abund,"na","na", no_reads,a,"bad"]
@@ -813,7 +812,7 @@ def worker2(f):
              print("3prime_adapter is " + threeprime_adapter)
              adapter = "5 prime = " +fiveprime_adapter + " & 3 prime = " + threeprime_adapter
   
-             command = "cutadapt -q 20 -e 0.25 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " -g " + fiveprime_adapter +  " " +  f + " 2> " + log2 + " | cutadapt -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " -a " + threeprime_adapter + " - > good-mapping/" + fastq_filename + " 2>> "+ log2
+             command = "cutadapt -q 20 -e 0.25 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " -g " + fiveprime_adapter +  " " +  f + " 2> " + log2 + " | cutadapt -q 20 -m "+ str(args.min_len)+ " -M " + str(args.max_len) + " -a " + threeprime_adapter + " - > " + path + "/good-mapping/" + fastq_filename + " 2>> "+ log2
              print(command)
              os.system(command)
              infile= open(log2, "r")
@@ -823,7 +822,7 @@ def worker2(f):
                    if "Reads with adapters" in line:
                     cut_adapt.append(line.strip().replace(" ", "").split("(")[1].split(")")[0])
              if (args.index!=None):
-              command = bowtie +" --best -v 1 -p 20 " + index + " -q good-mapping/" + fastq_filename + " > check.sam 2> "+ log
+              command = bowtie +" --best -v 1 -p 20 " + index + " -q " + path + "/good-mapping/" + fastq_filename + " > check.sam 2> "+ log
               print(command)
               os.system(command)
               infile= open(log, "r")
@@ -834,7 +833,7 @@ def worker2(f):
                     element = [filename,"both",fiveprime_adapter,threeprime_adapter,abund,cut_adapt[0],cut_adapt[1],no_reads,a,"good"]
                     return element
               else:
-                    command = "mv good-mapping/"+ fastq_filename + " bad-mapping/" + fastq_filename
+                    command = "mv " + path + "/good-mapping/"+ fastq_filename + " " + path + "/bad-mapping/" + fastq_filename
                     print(command)
                     os.system(command)
                     element = [filename,"both",fiveprime_adapter,threeprime_adapter,abund,cut_adapt[0],cut_adapt[1], no_reads,a,"bad"]
@@ -854,10 +853,7 @@ def worker3(f):
     filename = f.split(".")[0]
     command = "mkdir "+ "-p "+ "aux_files/" + filename
     os.system(command)
-    if (args.input_path!=None):
-       newpath = args.input_path + "/aux_files/" + filename + "/"
-    else:
-       newpath = "aux_files/" + filename + "/"
+    newpath = path + "aux_files/" + filename + "/"
     query_file = newpath + filename + "_query.fa"
     subject_file = newpath + filename + "_subject.fa"
     blast_file = newpath + filename + "_blast.csv"
@@ -947,7 +943,7 @@ def worker3(f):
       if (a >=50):
         return [filename,"3prime","na",adapter,abund,"na",cut_adapt[0],no_reads,a,"good"]
       else:
-        command = "mv good-mapping/"+ fastq_filename + " bad-mapping/" + fastq_filename
+        command = "mv " + path + "/good-mapping/"+ fastq_filename + " " + path + "/bad-mapping/" + fastq_filename
         print(command)
         os.system(command)
         return [filename,"3prime","na",adapter,abund,"na",cut_adapt[0],no_reads,a,"bad"]   
