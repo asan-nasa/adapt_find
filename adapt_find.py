@@ -138,7 +138,7 @@ def worker1(f):
             print("processing file " + filename + ".fastq") 
             command = "mkdir "+ "-p "+ path + "/aux_files/" + filename
             os.system(command)
-            newpath = path + "aux_files/" + filename + "/"
+            newpath = path + "/aux_files/" + filename + "/"
             fastq_filename = filename + "_trimmed.fastq"
             query_file = newpath + filename + "_query.fa"
             subject_file = newpath + filename + "_subject.fa"
@@ -655,7 +655,7 @@ def worker2(f):
             filename = f.split(".")[0]
             command = "mkdir "+ "-p "+ path + "aux_files/" + filename
             os.system(command)
-            newpath = path + "aux_files/" + filename + "/"
+            newpath = path + "/aux_files/" + filename + "/"
             fastq_filename = filename + "_trimmed.fastq"
             query_file = newpath + filename + "_query.fa"
             subject_file = newpath + filename + "_subject.fa"
@@ -851,7 +851,7 @@ def worker3(f):
     if f.endswith(".fastq.gz"):
        os.system("gzip " + f)
     filename = f.split(".")[0]
-    command = "mkdir "+ "-p "+ "aux_files/" + filename
+    command = "mkdir "+ "-p "+ "/aux_files/" + filename
     os.system(command)
     newpath = path + "aux_files/" + filename + "/"
     query_file = newpath + filename + "_query.fa"
