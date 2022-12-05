@@ -133,7 +133,10 @@ def worker1(f):
             print("processing file " + filename + ".fastq") 
             command = "mkdir "+ "-p "+ "aux_files/" + filename
             os.system(command)
-            newpath = "aux_files/" + filename + "/"
+            if (args.input_path!=None):
+               newpath = args.input_path + "/aux_files/" + filename + "/"
+            else:
+               newpath = "aux_files/" + filename + "/"
             fastq_filename = filename + "_trimmed.fastq"
             query_file = newpath + filename + "_query.fa"
             subject_file = newpath + filename + "_subject.fa"
@@ -650,7 +653,10 @@ def worker2(f):
             filename = f.split(".")[0]
             command = "mkdir "+ "-p "+ "aux_files/" + filename
             os.system(command)
-            newpath = "aux_files/" + filename + "/"
+            if (args.input_path!=None):
+               newpath = args.input_path + "/aux_files/" + filename + "/"
+            else:
+               newpath = "aux_files/" + filename + "/"
             fastq_filename = filename + "_trimmed.fastq"
             query_file = newpath + filename + "_query.fa"
             subject_file = newpath + filename + "_subject.fa"
@@ -848,7 +854,10 @@ def worker3(f):
     filename = f.split(".")[0]
     command = "mkdir "+ "-p "+ "aux_files/" + filename
     os.system(command)
-    newpath = "aux_files/" + filename + "/"
+    if (args.input_path!=None):
+       newpath = args.input_path + "/aux_files/" + filename + "/"
+    else:
+       newpath = "aux_files/" + filename + "/"
     query_file = newpath + filename + "_query.fa"
     subject_file = newpath + filename + "_subject.fa"
     blast_file = newpath + filename + "_blast.csv"
