@@ -74,7 +74,7 @@ else:
     cwd = os.getcwd()
    else:
     cwd= args.input_path
-   files = [f for f in os.listdir(cwd) if f.endswith(".fastq") or f.endswith(".fastq.gz")]
+   files = [cwd + "/" + f for f in os.listdir(cwd) if f.endswith(".fastq") or f.endswith(".fastq.gz")]
 
 if len(files)==0: 
    sys.exit('\nERROR: Could not find any FASTQ files. Please check if the input path is specified correctly. use ADAPT_find.py --help for more info\n%s'%(docstring))   
